@@ -18,6 +18,8 @@ namespace ClassLibrary1
                     customer.Balance -= ammount;
                     Console.WriteLine("Your new balance is: " + customer.Balance);
                     databaseRepository.UpdateData(customer);
+                    Movement movement = new Movement("Withdraw", ammount, customer.Balance, customer.Id);
+                    databaseRepository.InsertMovement(movement);
                 }
                 else
                 {
@@ -38,6 +40,8 @@ namespace ClassLibrary1
                 customer.Balance += ammount;
                 Console.WriteLine("Your new balance is: " + customer.Balance);
                 databaseRepository.UpdateData(customer);
+                Movement movement = new Movement("Deposit", ammount, customer.Balance, customer.Id);
+                databaseRepository.InsertMovement(movement);
             }
             else
             {
@@ -45,21 +49,21 @@ namespace ClassLibrary1
             }
         }
 
-        public void Transfer(int id, int ammount, Customer customer)
+        public void Transfer(string user, int ammount, Customer customer)
         {
             if (ammount > 0) 
             {
                 if (ammount < customer.Balance)
                 {
-                    Customer customer2 = databaseRepository.RetrieveData(id);
-                    if (customer2.Pin != null)
+                    Customer customer2 = databaseRepository.RetrieveData(user);
+                    if (customer2.User != null)
                     {
                         TransferAndUpdate(customer, customer2, ammount);
                         Console.WriteLine("Your new balance is: " + customer.Balance);
                     }
                     else
                     {
-                        Console.WriteLine("Invalid ID");
+                        Console.WriteLine("User not found");
                     }
                 }
                 else
@@ -77,6 +81,10 @@ namespace ClassLibrary1
             {
                 customer.Balance -= ammount;
                 customer2.Balance += ammount;
+                Movement movement = new Movement("Transfer out to " + customer2.User + " (id: " + customer2.Id + ")",ammount, customer.Balance, customer.Id);
+                databaseRepository.InsertMovement(movement);
+                Movement movement1 = new Movement("Transfer in from " + customer.User + " (id: " + customer.Id + ")", ammount, customer2.Balance, customer2.Id);
+                databaseRepository.InsertMovement(movement1);
                 databaseRepository.UpdateData(customer);
                 databaseRepository.UpdateData(customer2);
             }

@@ -10,43 +10,87 @@ namespace ClassLibrary1
 {
     public class DatabaseRepository : IDatabase
     {
-        public Customer RetrieveData(string pin)
+        public Customer RetrieveData(string user)
         {
             string cs = GenerateConnectionString();
             using (SqlConnection connection = new SqlConnection(cs))
             {
-                Customer customer = new Customer();
+                Customer customer= new Customer();
                 connection.Open();
                 SqlCommand cmd = connection.CreateCommand();
-                cmd.CommandText = "select * from Customers where Pin='" + pin + "'";
+                cmd.CommandText = "select * from Customers where Username='" + user + "'";
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
+                    customer.User = reader.GetString(1);
+                    customer.Password = reader.GetString(2);
                     customer.Id = reader.GetInt32(0);
-                    customer.Pin = reader.GetString(1);
-                    customer.Balance = reader.GetInt32(2);
+                    customer.Balance= reader.GetInt32(3);
                 }
                 return customer;
             }
         }
 
-        public Customer RetrieveData(int id)
+        public bool CheckIfExists(string column, string valueToAsk)
         {
             string cs = GenerateConnectionString();
             using (SqlConnection connection = new SqlConnection(cs))
             {
-                Customer customer=new Customer();
                 connection.Open();
                 SqlCommand cmd = connection.CreateCommand();
-                cmd.CommandText = "select * from Customers where Id=" + id;
+                cmd.CommandText = "select * from Customers where " + column + "='" + valueToAsk + "'";
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
+
+        public void ShowAllMovements(int id)
+        {
+            string cs = GenerateConnectionString();
+            using (SqlConnection connection = new SqlConnection(cs))
+            {
+                connection.Open();
+                SqlCommand cmd = connection.CreateCommand();
+                cmd.CommandText = "select * from Movements where CustomerId=" + id + " order by Id desc";
+                SqlDataReader reader = cmd.ExecuteReader();
+                Console.WriteLine("Movements: ");
+                while (reader.Read())
+                {
+                    Console.Write("Type: " + reader.GetString(1) + "   ");
+                    Console.Write("Ammount: " + reader.GetInt32(2) + "    ");
+                    Console.Write("Balance: " + reader.GetInt32(3) + "    ");
+                    Console.WriteLine("Time of movement: " + reader.GetDateTime(5));
+                }
+            }
+        }
+
+        public Movement RetrieveLastMovement (int id)
+        {
+            string cs = GenerateConnectionString();
+            using (SqlConnection connection = new SqlConnection(cs))
+            {
+                Movement movement = new Movement();
+                connection.Open();
+                SqlCommand cmd = connection.CreateCommand();
+                cmd.CommandText = "select top 1 * from Movements where CustomerId=" + id + " order by Id desc";
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    customer.Id = reader.GetInt32(0);
-                    customer.Pin = reader.GetString(1);
-                    customer.Balance = reader.GetInt32(2);
+                    movement.Id = reader.GetInt32(0);
+                    movement.Type = reader.GetString(1);
+                    movement.AmmountOfMoney = reader.GetInt32(2);
+                    movement.Balance = reader.GetInt32(3);
+                    movement.CustomerId = id;
+                    movement.DateTime = reader.GetDateTime(5);
                 }
-                return customer;
+                return movement;
             }
         }
 
@@ -57,11 +101,23 @@ namespace ClassLibrary1
             {
                 conn.Open();
                 SqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText = "update Customers set Balance=" + customer.Balance + " where Pin='" + customer.Pin + "'";
+                cmd.CommandText = "update Customers set Username='" + customer.User + "', Password='" + customer.Password + "', Balance=" + customer.Balance + " where Id=" + customer.Id;
                 SqlDataReader reader = cmd.ExecuteReader();
             }
         }
 
+        public void InsertMovement(Movement movement)
+        {
+            string cs = GenerateConnectionString();
+            using (SqlConnection connection = new SqlConnection(cs))
+            {
+                connection.Open();
+                SqlCommand cmd = connection.CreateCommand();
+                cmd.CommandText = "insert into Movements values ('" + movement.Type + "'," + movement.AmmountOfMoney + "," + movement.Balance + "," + movement.CustomerId + ",getdate())";
+                SqlDataReader reader = cmd.ExecuteReader();
+            }
+        }
+        
         public string GenerateConnectionString()
         {
             SqlConnectionStringBuilder connectionString = new SqlConnectionStringBuilder();

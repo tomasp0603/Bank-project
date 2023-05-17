@@ -5,12 +5,13 @@ class Program
 {
     static void Main()
     {
-        //variables needed for the program to check the pin
+        //variables needed for the program to check the user
         DatabaseRepository databaseRepository = new DatabaseRepository();
-        string pin = GetPin();
-        Customer customer = databaseRepository.RetrieveData(pin);
-        //verification of the pin
-        if (customer.Pin!=null)
+        Customer customer = new Customer();
+        string passAux = AskUserAndPassword(customer);
+        customer = databaseRepository.RetrieveData(customer.User);
+        //verification of the user and password
+        if (passAux==customer.Password)
         {
             bool verification = true;
             //loop everytime the user wants to choice an operation
@@ -22,27 +23,21 @@ class Program
         }
         else
         {
-            IdError();
+            Msg("Invalid username or password");
+            Main();
         }
-    }
-
-    static string GetPin()
-    {
-        string pin;
-        System.Console.Write("Please enter your pin: ");
-        pin = System.Console.ReadLine();
-        Console.Clear();
-        return pin;
     }
 
     //function to show the menu
     static void PrintMenu(Customer customer)
     {
-        Console.WriteLine("Welcome user: " + customer.Id);
+        Console.WriteLine("Welcome user: " + customer.User);
         Console.WriteLine("1. See your balance");
         Console.WriteLine("2. Withdraw");
         Console.WriteLine("3. Deposit");
-        Console.WriteLine("4.Transfer to another account");
+        Console.WriteLine("4. Transfer to another account");
+        Console.WriteLine("5. Change Username or Password");
+        Console.WriteLine("6. View all movements");
         Console.WriteLine("0. Exit the program");
         Console.Write("Enter your choice: ");
     }
@@ -75,6 +70,14 @@ class Program
                     TransferMenu(customer, operationsRepository);
                     break;
 
+                case 5:
+                    ChangeUserAndPass(customer);
+                    break;
+
+                case 6:
+                    ViewAllMovements(customer);
+                    break;
+
                 case 0:
                     //changes verification so the loop doesn't continue if the user enters 0
                     verif = false;
@@ -83,13 +86,13 @@ class Program
 
                 default:
                     //function to show an error message which is the parameter
-                    ErrorMsg("Enter a valid number");
+                    Msg("Enter a valid number");
                     break;
             }
         }
         else
         {
-            ErrorMsg("Enter a number");
+            Msg("Enter a number");
         }
     }
 
@@ -136,18 +139,20 @@ class Program
     static void TransferMenu(Customer customer, OperationsRepository operationsRepository)
     {
         Console.Clear();
+        string user;
         Console.Write("Enter the ammount you want to transfer: ");
         if (int.TryParse(Console.ReadLine(), out int ammount))
         {
-            Console.Write("Enter the account id you want to transfer to: ");
-            if (int.TryParse(Console.ReadLine(), out int id))
+            Console.Write("Enter the user you want to transfer to: ");
+            user = Console.ReadLine();
+            if (user == customer.User)
             {
-                operationsRepository.Transfer(id,ammount,customer);
+                Console.WriteLine("You can't transfer to yourself");
             }
             else
             {
-                Console.WriteLine("Enter a number");
-            }
+                operationsRepository.Transfer(user, ammount, customer);
+            } 
         }
         else
         {
@@ -157,7 +162,98 @@ class Program
         Console.Clear();
     }
 
-    static void ErrorMsg(string msg)
+    static void ChangeUserAndPass(Customer customer)
+    {
+        Console.Clear();
+        int choice;
+        bool verif=true;
+        DatabaseRepository databaseRepository = new DatabaseRepository();
+        
+        do
+        {
+            Console.WriteLine("1. Change username");
+            Console.WriteLine("2. Change password");
+            Console.WriteLine("0. Go back");
+            if (int.TryParse(Console.ReadLine(), out choice))
+            {
+                switch (choice)
+                {
+                    case 1:
+                        ChgUsername();
+                        break;
+
+                    case 2:
+                        ChgPassword();
+                        break;
+
+                    case 0:
+                        verif= false;
+                        databaseRepository.UpdateData(customer);
+                        break;
+
+                    default:
+                        Msg("Enter a valid option");
+                        break;
+                }
+            }
+            else
+            {
+                Msg("Enter a valid option");
+            }
+        } while (verif);
+        Console.Clear();
+
+        void ChgUsername()
+        {
+            Console.Clear();
+            Console.WriteLine("Enter your new username: ");
+            string userAux = Console.ReadLine();
+            if (userAux == "")
+            {
+                Msg("Please enter a valid username");
+            }
+            else if (databaseRepository.CheckIfExists("Username", userAux))
+            {
+                customer.User = userAux;
+                Msg("Your new username is " + customer.User);
+            }
+            else
+            {
+                Msg("This username is already in use.");
+            }
+        }
+
+        void ChgPassword()
+        {
+            Console.Clear();
+            Console.WriteLine("Enter your new password: ");
+            string passAux = Console.ReadLine();
+            if (passAux.Length < 8)
+            {
+                Msg("Your password must have a minimum of 8 characters.");
+            }
+            else if (databaseRepository.CheckIfExists("Password",passAux))
+            {
+                customer.Password = passAux;
+                Msg("Your new password is: " + customer.Password);
+            }
+            else
+            {
+                Msg("This password is already in use.");
+            }
+        }
+    }
+
+    static void ViewAllMovements(Customer customer)
+    {
+        Console.Clear();
+        DatabaseRepository databaseRepository = new DatabaseRepository();
+        databaseRepository.ShowAllMovements(customer.Id);
+        Console.ReadKey();
+        Console.Clear();
+    }
+
+    static void Msg(string msg)
     {
         Console.Clear();
         Console.WriteLine(msg);
@@ -165,11 +261,14 @@ class Program
         Console.Clear();
     }
 
-    static void IdError()
+    static string AskUserAndPassword(Customer customer)
     {
-        Console.WriteLine("Invalid Pin");
-        Console.ReadKey();
+        string passAux;
+        Console.Write("Enter your username: ");
+        customer.User = Console.ReadLine();
+        System.Console.Write("Enter your password: ");
+        passAux = Console.ReadLine();
         Console.Clear();
-        Main();
+        return passAux;
     }
 }

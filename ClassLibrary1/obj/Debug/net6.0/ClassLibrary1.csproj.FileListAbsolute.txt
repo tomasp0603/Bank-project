@@ -10,3 +10,15 @@ C:\Users\Tomas Peña\Documents\Curso C#\Bank-1.0\ClassLibrary1\obj\Debug\net6.0\
 C:\Users\Tomas Peña\Documents\Curso C#\Bank-1.0\ClassLibrary1\obj\Debug\net6.0\refint\ClassLibrary1.dll
 C:\Users\Tomas Peña\Documents\Curso C#\Bank-1.0\ClassLibrary1\obj\Debug\net6.0\ClassLibrary1.pdb
 C:\Users\Tomas Peña\Documents\Curso C#\Bank-1.0\ClassLibrary1\obj\Debug\net6.0\ref\ClassLibrary1.dll
+C:\Users\Tomas Peña\Desktop\Bank-1.0\Bank-project\ClassLibrary1\bin\Debug\net6.0\ClassLibrary1.deps.json
+C:\Users\Tomas Peña\Desktop\Bank-1.0\Bank-project\ClassLibrary1\bin\Debug\net6.0\ClassLibrary1.dll
+C:\Users\Tomas Peña\Desktop\Bank-1.0\Bank-project\ClassLibrary1\bin\Debug\net6.0\ClassLibrary1.pdb
+C:\Users\Tomas Peña\Desktop\Bank-1.0\Bank-project\ClassLibrary1\obj\Debug\net6.0\ClassLibrary1.csproj.AssemblyReference.cache
+C:\Users\Tomas Peña\Desktop\Bank-1.0\Bank-project\ClassLibrary1\obj\Debug\net6.0\ClassLibrary1.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Tomas Peña\Desktop\Bank-1.0\Bank-project\ClassLibrary1\obj\Debug\net6.0\ClassLibrary1.AssemblyInfoInputs.cache
+C:\Users\Tomas Peña\Desktop\Bank-1.0\Bank-project\ClassLibrary1\obj\Debug\net6.0\ClassLibrary1.AssemblyInfo.cs
+C:\Users\Tomas Peña\Desktop\Bank-1.0\Bank-project\ClassLibrary1\obj\Debug\net6.0\ClassLibrary1.csproj.CoreCompileInputs.cache
+C:\Users\Tomas Peña\Desktop\Bank-1.0\Bank-project\ClassLibrary1\obj\Debug\net6.0\ClassLibrary1.dll
+C:\Users\Tomas Peña\Desktop\Bank-1.0\Bank-project\ClassLibrary1\obj\Debug\net6.0\refint\ClassLibrary1.dll
+C:\Users\Tomas Peña\Desktop\Bank-1.0\Bank-project\ClassLibrary1\obj\Debug\net6.0\ClassLibrary1.pdb
+C:\Users\Tomas Peña\Desktop\Bank-1.0\Bank-project\ClassLibrary1\obj\Debug\net6.0\ref\ClassLibrary1.dll
